@@ -99,7 +99,9 @@ class YearGroup: #class to hold year group information
             print(self.forms[i].__repr__())
     
     def selectClass(self, classroom): #implement!!!
-        pass
+        for cl in self.classrooms:
+            if cl.name == classroom:
+                return cl
     
     def selectForm(self, form):
         pass
@@ -159,9 +161,10 @@ school.createYearGroup(10, 'Ms Kocho')
 school.displayYears()
 
 school.selectYearGroup(7).createClassroom()
-school.selectYearGroup(7).displayForms()
+print(school.selectYearGroup(7).selectClass('7A').name + ' Was Selected')
+school.selectYearGroup(7).displayClasses()
 school.selectYearGroup(7).deleteClassroom('7A')
-school.selectYearGroup(7).displayForms()
+school.selectYearGroup(7).displayClasses()
 # print(school.selectYearGroup(7))
 # print(school)
 
