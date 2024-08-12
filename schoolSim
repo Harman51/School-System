@@ -17,7 +17,7 @@ class School: #main school class
         self.yearGroup.append(yg)
         self.numberOfStudents += yg.numberOfStudents
 
-    def createYearGroup(self, year, hof):
+    def createYearGroup(self, year, hof): #creates and addes the yeargroup to the list yearGroups which holds the year groups found at the school
         new = YearGroup(year, hof)
         self.addYearGroup(new)
         print("Added {year} to the school".format(year=self.yearGroup[-1].__repr__()))
@@ -29,8 +29,8 @@ class School: #main school class
         
         print("Year " + str(year) + " was not found")
     
-    def deleteYearGroup(self, year): #checks the list of years and compares with the attribute year
-        for yg in self.yearGroup:
+    def deleteYearGroup(self, year): #checks the list of years and compares with the attribute year to select the required year and delete it 
+        for yg in self.yearGroup: #!!! UPDATE - can use the method selectYearGroup to shorten this code !!!
             if yg.year == year:
                 self.yearGroup.remove(yg)
                 print("Year group " + str(year) + " has been removed")
@@ -81,7 +81,7 @@ class YearGroup: #class to hold year group information
             if form.name == inputClassroom:
                 self.forms.remove(form)
                 print('Form group ' + inputClassroom + ' deleted.')
-                return
+                return  #return to stop the print below from outputting as well
 
         print('Classroom/Form' + inputClassroom + ' not found.')        
     
@@ -95,16 +95,22 @@ class YearGroup: #class to hold year group information
             print(self.classrooms[i].__repr__())
     
     def displayForms(self):
+        if len(self.forms) == 0:
+            print('No forms in this year group')
+            return
+
         for i in range(len(self.forms)):
-            print(self.forms[i].__repr__())
+            print(self.forms[i].__repr__()) #__repr__ used so only the variable name is outputted when printing instead of the __str__
     
-    def selectClass(self, classroom): #implement!!!
+    def selectClass(self, classroom): #selects specific class and forms from lists 
         for cl in self.classrooms:
             if cl.name == classroom:
                 return cl
     
     def selectForm(self, form):
-        pass
+        for f in self.forms:
+            if f.name == form:
+                return f
     
 class Classroom:
     name = None
@@ -123,9 +129,14 @@ class Classroom:
     def __str__(self):
         description = "Welcome to class {name}. This is a {subject} class".format(name=self.name, subject=self.subject)
     
-    def addStudent(self, newStudent):
+    def addStudent(self, newStudent): #Add student to the students list for the class
         self.students.append(newStudent)
         self.studentCount += 1
+    
+    def selectStudent(self, student):
+        for s in self.students:
+            if s.name == student:
+                return s
 
     def displayClass(self):
         for i in range(len(self.students)):
@@ -152,6 +163,8 @@ class Student:
         description = "Hi my name is {first} {second}. I am {age} years old and in year {}"
 
 
+# tests for the code 
+
 school = School('Greenford High School', 'Mr Singh')
 school.createYearGroup(7, 'Mrs Salazar')
 school.createYearGroup(8, 'Mr Jones')
@@ -161,7 +174,7 @@ school.createYearGroup(10, 'Ms Kocho')
 school.displayYears()
 
 school.selectYearGroup(7).createClassroom()
-print(school.selectYearGroup(7).selectClass('7A').name + ' Was Selected')
+print(school.selectYearGroup(7).selectForm('7A').name + ' Was Selected')
 school.selectYearGroup(7).displayClasses()
 school.selectYearGroup(7).deleteClassroom('7A')
 school.selectYearGroup(7).displayClasses()
