@@ -1,0 +1,180 @@
+class School: #main school class
+    name = None
+    headTeacher = None
+    yearGroup = [] #list to hold the year group classes 
+    numberOfStudents = 0
+    numberOfTeachers = 0
+
+    def __init__(self, schoolName, headTeacher):
+        self.name = schoolName
+        self.headTeacher = headTeacher
+
+    def __repr__(self):
+        description = "Welcome to {school}. I am {headTeacher}, the Head Teacher. There are currently {students} student and {teachers} teachers here".format(school = self.name, headTeacher = self.headTeacher, students = self.numberOfStudents, teachers = self.numberOfTeachers)
+        return description
+
+    def addYearGroup(self, yg): #add instance of YearGroup to the years list
+        self.yearGroup.append(yg)
+        self.numberOfStudents += yg.numberOfStudents
+
+    def createYearGroup(self, year, hof):
+        new = YearGroup(year, hof)
+        self.addYearGroup(new)
+        print("Added {year} to the school".format(year=self.yearGroup[-1].__repr__()))
+    
+    def selectYearGroup(self, year):
+        for yg in self.yearGroup:
+            if yg.year == year:
+                return yg
+        
+        print("Year " + str(year) + " was not found")
+    
+    def deleteYearGroup(self, year): #checks the list of years and compares with the attribute year
+        for yg in self.yearGroup:
+            if yg.year == year:
+                self.yearGroup.remove(yg)
+                print("Year group " + str(year) + " has been removed")
+                return  #stops the method if deleted
+
+        print("Year group was not found")
+
+    def displayYears(self):
+        for i in range(len(self.yearGroup)):
+            print(self.yearGroup[i].__repr__())
+
+
+class YearGroup: #class to hold year group information
+    year = None
+    headOfYear = None
+    numberOfStudents = 0
+    forms = []
+    classrooms = []
+
+    def __init__(self, year, hof):
+        self.year = year
+        self.headOfYear = hof
+    
+    def __repr__(self): #This will be the representation of the instance in a list
+        return "Year" + str(self.year)
+    
+    def __str__(self): #This will be the description when yeargroup is printed 
+        description = "This is year {year}. I am the head of year {hof}. There are {students} students and {forms} different form groups".format(year = self.year, hof = self.headOfYear, students = self.numberOfStudents,forms = len(self.forms))
+        return description
+    
+    def createClassroom(self):
+        newName = input('What will be the class name: ') #asks the user what to name class and what subject the class is 
+        newSubject = input('What will be the subject for the class: ')
+        new = Classroom(newName, newSubject)
+        if newSubject == 'form': #if statement which will assign the classroom to the correct list
+            self.forms.append(new)
+        else:
+            self.classrooms.append(new)
+    
+    def deleteClassroom(self, inputClassroom): #handles deletion of a class whether it is in the forms or classroom list. Classes should not be called the same thing.
+        for classroom in self.classrooms:
+            if classroom.name == inputClassroom:
+                self.classrooms.remove(classroom)
+                print('Classroom ' + inputClassroom + ' deleted.')
+                return
+
+        for form in self.forms:
+            if form.name == inputClassroom:
+                self.forms.remove(form)
+                print('Form group ' + inputClassroom + ' deleted.')
+                return
+
+        print('Classroom/Form' + inputClassroom + ' not found.')        
+    
+
+    def displayClasses(self):
+        if len(self.classrooms) == 0:
+            print('No classes in this year group!')
+            return 
+
+        for i in range(len(self.classrooms)):
+            print(self.classrooms[i].__repr__())
+    
+    def displayForms(self):
+        for i in range(len(self.forms)):
+            print(self.forms[i].__repr__())
+    
+    def selectClass(self, classroom): #implement!!!
+        pass
+    
+    def selectForm(self, form):
+        pass
+    
+class Classroom:
+    name = None
+    teacher = None
+    subject = None
+    studentCount = 0
+    students = []
+
+    def __init__(self, name, subject):
+        self.name = name
+        self.subject = subject
+
+    def __repr__(self):
+        return self.name.upper()
+    
+    def __str__(self):
+        description = "Welcome to class {name}. This is a {subject} class".format(name=self.name, subject=self.subject)
+    
+    def addStudent(self, newStudent):
+        self.students.append(newStudent)
+        self.studentCount += 1
+
+    def displayClass(self):
+        for i in range(len(self.students)):
+            print(self.students[i].__repr__())
+
+
+class Student:
+    firstname = None
+    surname = None
+    age = None
+    birthday = None
+    inClass = []
+    inYear = 0
+
+    def __init__(self, firstname, surname, age):
+        self.firstname = firstname
+        self.surname = surname
+        self.age = age
+
+    def __repr__(self):
+        return self.firstname + ' ' + self.surname       
+    
+    def __str__(self):
+        description = "Hi my name is {first} {second}. I am {age} years old and in year {}"
+
+
+school = School('Greenford High School', 'Mr Singh')
+school.createYearGroup(7, 'Mrs Salazar')
+school.createYearGroup(8, 'Mr Jones')
+school.createYearGroup(9, 'Mr mohamed')
+school.createYearGroup(10, 'Ms Kocho')
+
+school.displayYears()
+
+school.selectYearGroup(7).createClassroom()
+school.selectYearGroup(7).displayForms()
+school.selectYearGroup(7).deleteClassroom('7A')
+school.selectYearGroup(7).displayForms()
+# print(school.selectYearGroup(7))
+# print(school)
+
+# print(school.yearGroup)
+# school.selectYearGroup(7).createClassroom()
+# student = Student('Harman', 'Suman', 19)
+# #school.selectYearGroup(7).forms[0].addStudent(student)
+# print(school.selectYearGroup(7).forms)
+# print(school.selectYearGroup(7).classrooms)
+# #print(school.selectYearGroup(7).forms[0].students[0].__repr__())
+
+# school.displayYears()
+# school.selectYearGroup(7).displayClasses()
+
+
+
