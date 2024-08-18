@@ -129,7 +129,8 @@ class Classroom:
     def __str__(self):
         description = "Welcome to class {name}. This is a {subject} class".format(name=self.name, subject=self.subject)
     
-    def addStudent(self, newStudent): #Add student to the students list for the class
+    def createStudent(self, name, surname, age): #Add student to the students list for the class
+        newStudent = Student(name, surname, age)
         self.students.append(newStudent)
         self.studentCount += 1
     
@@ -174,12 +175,15 @@ school.createYearGroup(10, 'Ms Kocho')
 school.displayYears()
 
 school.selectYearGroup(7).createClassroom()
-print(school.selectYearGroup(7).selectForm('7A').name + ' Was Selected')
+#print(school.selectYearGroup(7).selectForm('7A').name + ' Was Selected')
 school.selectYearGroup(7).displayClasses()
-school.selectYearGroup(7).deleteClassroom('7A')
-school.selectYearGroup(7).displayClasses()
+school.selectYearGroup(7).selectClass('7A').createStudent('Harman', 'Suman', 19)
+school.selectYearGroup(7).selectClass('7A').displayClass()
+#school.selectYearGroup(7).deleteClassroom('7A')
+#school.selectYearGroup(7).displayClasses()
 # print(school.selectYearGroup(7))
 # print(school)
+
 
 # print(school.yearGroup)
 # school.selectYearGroup(7).createClassroom()
