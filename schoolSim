@@ -10,7 +10,7 @@ class School: #main school class
         self.headTeacher = headTeacher
 
     def __repr__(self):
-        description = "Welcome to {school}. I am {headTeacher}, the Head Teacher. There are currently {students} student and {teachers} teachers here".format(school = self.name, headTeacher = self.headTeacher, students = self.numberOfStudents, teachers = self.numberOfTeachers)
+        description = "Welcome to {school}. I am {headTeacher}, the Head Teacher. There are currently {students} student(s) and {teachers} teacher(s) here".format(school = self.name, headTeacher = self.headTeacher, students = self.numberOfStudents, teachers = self.numberOfTeachers)
         return description
 
     def addYearGroup(self, yg): #add instance of YearGroup to the years list
@@ -61,9 +61,7 @@ class YearGroup: #class to hold year group information
         description = "This is year {year}. I am the head of year {hof}. There are {students} students and {forms} different form groups".format(year = self.year, hof = self.headOfYear, students = self.numberOfStudents,forms = len(self.forms))
         return description
     
-    def createClassroom(self):
-        newName = input('What will be the class name: ') #asks the user what to name class and what subject the class is 
-        newSubject = input('What will be the subject for the class: ')
+    def createClassroom(self, newName, newSubject):
         new = Classroom(newName, newSubject)
         if newSubject == 'form': #if statement which will assign the classroom to the correct list
             self.forms.append(new)
@@ -166,35 +164,81 @@ class Student:
 
 # tests for the code 
 
-school = School('Greenford High School', 'Mr Singh')
-school.createYearGroup(7, 'Mrs Salazar')
-school.createYearGroup(8, 'Mr Jones')
-school.createYearGroup(9, 'Mr mohamed')
-school.createYearGroup(10, 'Ms Kocho')
-
-school.displayYears()
-
-school.selectYearGroup(7).createClassroom()
-#print(school.selectYearGroup(7).selectForm('7A').name + ' Was Selected')
-school.selectYearGroup(7).displayClasses()
-school.selectYearGroup(7).selectClass('7A').createStudent('Harman', 'Suman', 19)
-school.selectYearGroup(7).selectClass('7A').displayClass()
-#school.selectYearGroup(7).deleteClassroom('7A')
-#school.selectYearGroup(7).displayClasses()
-# print(school.selectYearGroup(7))
-# print(school)
-
-
-# print(school.yearGroup)
-# school.selectYearGroup(7).createClassroom()
-# student = Student('Harman', 'Suman', 19)
-# #school.selectYearGroup(7).forms[0].addStudent(student)
-# print(school.selectYearGroup(7).forms)
-# print(school.selectYearGroup(7).classrooms)
-# #print(school.selectYearGroup(7).forms[0].students[0].__repr__())
+# school = School('Greenford High School', 'Mr Singh')
+# school.createYearGroup(7, 'Mrs Salazar')
+# school.createYearGroup(8, 'Mr Jones')
+# school.createYearGroup(9, 'Mr mohamed')
+# school.createYearGroup(10, 'Ms Kocho')
 
 # school.displayYears()
+
+# school.selectYearGroup(7).createClassroom()
+# #print(school.selectYearGroup(7).selectForm('7A').name + ' Was Selected')
 # school.selectYearGroup(7).displayClasses()
+# school.selectYearGroup(7).selectClass('7A').createStudent('Harman', 'Suman', 19)
+# school.selectYearGroup(7).selectClass('7A').displayClass()
+
+
+#main loop
+
+def main(): 
+
+    print('Welcome to the School Management System!')
+    
+    nameVerify = False  #These statements will allow the user to re enter information if the program does not deem the inputs valid
+    schoolVerify = False
+    while nameVerify == False:
+        userName = input('You will be the Head Teacher of this School, Please enter your name: ')
+
+        if isinstance(userName, str):
+            nameVerify = True
+        else:
+            print('Please enter a valid name!')
+    
+    while schoolVerify == False:
+
+        userSchool = input('What will be the name of your School: ')
+
+        if isinstance(userSchool, str):
+            schoolVerify = True
+        else:
+            print('Please enter a valid school name')
+
+
+    school = School(userSchool, userName)
+    print('School has been Successfully Created!')
+    print('-----------------------------------------')
+    print(school)
+
+    quitProgram = False
+    while quitProgram == False:
+        
+        print('Option Menu:')
+        print('1) Add a Year Group')
+        print('2) Delete a Year Group')
+        print('3) View All School Year Groups')
+        print('4) Select a Year Group')
+        print('5) Exit')
+
+        choice = input('What would you like to do?: ')
+
+        if choice == '1':
+            newYear = input('What Year would you like to add: ')
+            newHof = input('Your new year group needs a Head of Year!: ')
+            school.createYearGroup(newYear, newHof)
+            print(school.selectYearGroup(newYear).__repr__() + ' Successfully Created!')
+            print('-----------------------------------------')
+
+        elif choice == '5':
+            print('Exiting Program')
+            quitProgram = True
+        
+        else:
+            print('Please Enter a Valid Choice')
+            print('-----------------------------------------')
+
+main()
+    
 
 
 
