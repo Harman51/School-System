@@ -352,6 +352,17 @@ def manageClass(classroom):
             print(newName + ' was Succesfully Added!')
             print('-----------------------------------------')
         
+        elif choice == '2': #need to add remove student method from the 
+            pass
+
+        elif choice == '3':
+            print('Students in Class ' + classroom.name + ': ')
+            classroom.displayClass()
+            print('-----------------------------------------')
+        
+        elif choice == '4': #need to add student selection
+            pass
+
         elif choice == '5':
             print('Exiting Classroom ' + classroom.name)
             classExit = True
