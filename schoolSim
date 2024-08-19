@@ -22,6 +22,7 @@ class School: #main school class
         self.addYearGroup(new)
         print("Added {year} to the school".format(year=self.yearGroup[-1].__repr__()))
     
+    
     def selectYearGroup(self, year):
         for yg in self.yearGroup:
             if yg.year == year:
@@ -67,9 +68,17 @@ class YearGroup: #class to hold year group information
     def createClassroom(self, newName, newSubject):
         new = Classroom(newName, newSubject)
         if newSubject == 'form': #if statement which will assign the classroom to the correct list
-            self.forms.append(new)
+            self.addForm(new)
         else:
-            self.classrooms.append(new)
+            self.addClassroom(new)
+    
+    def addClassroom(self, cRoom): #handles the adding of classrooms to the list and updating student count
+        self.classrooms.append(cRoom)
+        self.numberOfStudents += cRoom.studentCount
+    
+    def addForm(self, form):
+        self.forms.append(form)
+        #Need to correctly implement student count with overlapping classes
     
     def deleteClassroom(self, inputClassroom): #handles deletion of a class whether it is in the forms or classroom list. Classes should not be called the same thing.
         for classroom in self.classrooms:
@@ -107,17 +116,20 @@ class YearGroup: #class to hold year group information
         for cl in self.classrooms:
             if cl.name == classroom:
                 return cl
+        
+        print('Class ' + classroom + ' was not found.') #runs this if the if statment is not met
     
     def selectForm(self, form):
         for f in self.forms:
             if f.name == form:
                 return f
     
+        print('Form ' + form + ' was not found.')
 class Classroom:
     name = None
     teacher = None
     subject = None
-    studentCount = 0
+    studentCount = 0 #can make this so it is pre defined and limits the class to that amount of students
     students = []
 
     def __init__(self, name, subject):
@@ -165,23 +177,6 @@ class Student:
         description = "Hi my name is {first} {second}. I am {age} years old and in year {}"
 
 
-# tests for the code 
-
-# school = School('Greenford High School', 'Mr Singh')
-# school.createYearGroup(7, 'Mrs Salazar')
-# school.createYearGroup(8, 'Mr Jones')
-# school.createYearGroup(9, 'Mr mohamed')
-# school.createYearGroup(10, 'Ms Kocho')
-
-# school.displayYears()
-
-# school.selectYearGroup(7).createClassroom()
-# #print(school.selectYearGroup(7).selectForm('7A').name + ' Was Selected')
-# school.selectYearGroup(7).displayClasses()
-# school.selectYearGroup(7).selectClass('7A').createStudent('Harman', 'Suman', 19)
-# school.selectYearGroup(7).selectClass('7A').displayClass()
-
-
 #main loop
 
 def main(): 
@@ -216,7 +211,7 @@ def main():
     quitProgram = False
     while quitProgram == False:
         
-        print('Option Menu:')
+        print('School Option Menu:')
         print('1) Add a Year Group')
         print('2) Delete a Year Group')
         print('3) View All School Year Groups')
@@ -247,15 +242,78 @@ def main():
         elif choice == '4': #Add functionality here to allow the year group to be manipulated
             selYear = int(input('Enter the Year of the Year Group you would like to access: '))
             yearGroup = school.selectYearGroup(selYear) 
+            manageYG(yearGroup)
 
 
         elif choice == '5':
             print('Exiting Program')
+            print('-----------------------------------------')
             quitProgram = True
         
         else:
             print('Please Enter a Valid Choice')
             print('-----------------------------------------')
+
+
+def manageYG(yearGroup):
+    
+    print('-----------------------------------------')
+    print(yearGroup)
+
+    ygExit = False
+    while ygExit == False:
+
+        print('Year Group Option Menu')
+        print('1) Create Classroom/Form')
+        print('2) Delete Clasroom/Form')
+        print('3) See Forms')
+        print('4) See Classrooms')
+        print('5) Select Classroom/Form')
+        print('6) Exit')
+
+        choice = input('What would you like to do?: ')
+        print('-----------------------------------------')
+
+        if choice == '1':
+            cName = input('What will be the Classroom/Form name?: ')
+            cSubject = input('What Subject will be studied in this class. If a form group, please enter "form": ')
+            yearGroup.createClassroom(cName, cSubject)
+            if cSubject == 'form':
+                print(yearGroup.selectForm(cName).__repr__() + ' was Succesfully Created')
+                print('-----------------------------------------')
+            else:
+                print(yearGroup.selectClass(cName).__repr__() + ' was Succesfully Created')
+                print('-----------------------------------------')
+        
+        elif choice == '2': #Can improve this and method to allow for same name but different subjects to delete.
+            delClass = input('Please enter the name of the Classroom/Form you wish to delete: ')
+            yearGroup.deleteClassroom(delClass)
+            print('-----------------------------------------')
+        
+        elif choice == '3':
+            print('These are all the forms in the Year Group: ')
+            yearGroup.displayForms()
+            print('-----------------------------------------')
+        
+        elif choice == '4':
+            print('These are all the Classrooms in the Year: ')
+            yearGroup.displayClasses()
+            print('-----------------------------------------')
+        
+        elif choice == '5':
+            selName = input('What is the Classroom/Form name?: ')
+            selSubject = input('Please enter the class Subject: ')
+            if selSubject == 'form':
+                yearGroup.selectForm(selName)
+            else:
+                yearGroup.selectClass(selName)
+
+        
+        elif choice == '6':
+            print('Exiting Year Group')
+            print('-----------------------------------------')
+            ygExit = True
+            
 
 main()
     
