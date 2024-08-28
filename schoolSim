@@ -177,6 +177,122 @@ class Student:
     
     def __str__(self):
         description = "Hi my name is {first} {second}. I am {age} years old and in year {}"
+        return description
+
+class commandInterpreter:
+    
+    def __init__(self, school):
+        self.school = school
+    
+    def interpret(self, command):
+        parts = command.lower().split() #allows users to write in any case and still properly handle commands
+
+        if not parts:
+            print('Enter a valid command! ')
+            return
+        
+        action = parts[0] #this will take the actual command word
+
+        if action == 'add':
+            if len(parts) == 3 and parts[1] == 'year':
+                year = int(parts[2])
+                hof = input('Enter the Head Of Year ' + str(year) + ': ')
+                self.school.createYearGroup(year, hof)
+                print(self.school.selectYearGroup(year).__repr__() + ' Successfully Created!')
+            else:
+                print('Invalid Command. Please use the format "add year <yearnumber>"')
+            
+        elif action == 'delete':
+            if len(parts) == 3 and parts[1] == 'year':
+                year = int(parts[2])
+                self.school.deleteYearGroup(year)
+                print('Year ' + str(year) + ' Succesfully Deleted.')
+            else: 
+                print('Invalid Command. Please use the format "delete year <yearnumber>"')
+        
+        elif action == 'view':
+            if len(parts) == 2 and parts[1] == 'years':
+                print('These are all the Year Groups: ')
+                self.school.displayYears()
+            else:
+                print('Invalid Command. Please use the format "view years"')
+        
+        elif action == 'select':
+            if len(parts) == 3 and parts[1] == 'year':
+                year = int(parts[2])
+                yearGroup = self.school.selectYearGroup(year)
+                if yearGroup:
+                    self.manageYearGroup(yearGroup)
+            else:
+                print("Invalid 'select' command. Use 'select year <yearnumber>'.")
+
+
+    def manageYearGroup(self, yearGroup):
+
+        print('-----------------------------------------')
+        print(yearGroup)
+
+        ygExit = False
+        while ygExit == False:
+
+            print('Year Group Option Menu')
+            print('1) Create Classroom/Form')
+            print('2) Delete Clasroom/Form')
+            print('3) See Forms')
+            print('4) See Classrooms')
+            print('5) Select Classroom/Form')
+            print('6) Exit')
+
+            choice = input('What would you like to do?: ')
+            print('-----------------------------------------')
+
+            if choice == '1':
+                cName = input('What will be the Classroom/Form name?: ')
+                cSubject = input('What Subject will be studied in this class. If a form group, please enter "form": ')
+                yearGroup.createClassroom(cName, cSubject)
+                if cSubject == 'form':
+                    print(yearGroup.selectForm(cName).__repr__() + ' was Succesfully Created')
+                    print('-----------------------------------------')
+                else:
+                    print(yearGroup.selectClass(cName).__repr__() + ' was Succesfully Created')
+                    print('-----------------------------------------')
+            
+            elif choice == '2': #Can improve this and method to allow for same name but different subjects to delete.
+                delClass = input('Please enter the name of the Classroom/Form you wish to delete: ')
+                yearGroup.deleteClassroom(delClass)
+                print('-----------------------------------------')
+            
+            elif choice == '3':
+                print('These are all the forms in the Year Group: ')
+                yearGroup.displayForms()
+                print('-----------------------------------------')
+            
+            elif choice == '4':
+                print('These are all the Classrooms in the Year: ')
+                yearGroup.displayClasses()
+                print('-----------------------------------------')
+            
+            elif choice == '5':
+                selName = input('What is the Classroom/Form name?: ')
+                selSubject = input('Please enter the class Subject: ')
+                if selSubject == 'form':
+                    selClass = yearGroup.selectForm(selName)
+                    if selClass:
+                        manageClass(selClass)
+                else:
+                    selClass = yearGroup.selectClass(selName)
+                    if selClass:
+                        manageClass(selClass)
+
+                print('-----------------------------------------')
+            
+            elif choice == '6':
+                print('Exiting Year Group')
+                print('-----------------------------------------')
+                ygExit = True
+            
+            else:
+                print('Enter a valid choice!')
 
 
 #main loop
@@ -210,51 +326,16 @@ def main():
     print('-----------------------------------------')
     print(school)
 
+    interpreter = commandInterpreter(school)
     quitProgram = False
     while quitProgram == False:
         
-        print('School Option Menu:')
-        print('1) Add a Year Group')
-        print('2) Delete a Year Group')
-        print('3) View All School Year Groups')
-        print('4) Select a Year Group')
-        print('5) Exit')
-
-        choice = input('What would you like to do?: ')
-        print('-----------------------------------------')
-
-        if choice == '1':
-            newYear = int(input('What Year would you like to add: '))
-            newHof = input('Your new year group needs a Head of Year!: ')
-            school.createYearGroup(newYear, newHof)
-            print(school.selectYearGroup(newYear).__repr__() + ' Successfully Created!')
-            print('-----------------------------------------')
-        
-        elif choice == '2':
-            delYear = int(input('Please enter the year of the Year Group you want to delete: '))
-            school.deleteYearGroup(delYear)
-            print('Year ' + str(delYear) + ' Succesfully Deleted.')
-            print('-----------------------------------------')
-        
-        elif choice == '3':
-            print('These are all the Year Groups: ')
-            school.displayYears()
-            print('-----------------------------------------')
-        
-        elif choice == '4': #Add functionality here to allow the year group to be manipulated
-            selYear = int(input('Enter the Year of the Year Group you would like to access: '))
-            yearGroup = school.selectYearGroup(selYear)
-            if yearGroup: 
-                manageYG(yearGroup)
-
-
-        elif choice == '5':
+        command = input("Enter a command (or 'exit' to quit): ").strip()
+        if command.lower() == 'exit':
             print('Exiting Program')
-            print('-----------------------------------------')
             quitProgram = True
-        
         else:
-            print('Please Enter a Valid Choice')
+            interpreter.interpret(command)
             print('-----------------------------------------')
 
 
