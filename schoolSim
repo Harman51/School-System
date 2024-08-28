@@ -181,9 +181,29 @@ class Student:
 
 class commandInterpreter:
     
+    commands = {
+            'add year <yearnumber>': 'Adds a year group to the school.',
+            'select year <yearnumber>': 'Selects a year group to manage.',
+            'delete year <yearnumber>': 'Deletes a year group from the school.',
+            'view years': 'Displays all years in the school',
+            'add class <name>': 'Adds a classroom to the selected year group.',
+            'select class <name>': 'Selects a classroom to manage.',
+            'delete class <name>': 'Deletes a classroom from the selected year group.',
+            'view forms/classes': 'View all forms/classrooms in the year',
+            'exit': 'Exits the command interpreter.'
+        }
+    
     def __init__(self, school):
         self.school = school
+        self.yearGroup = None
+        self.classroom = None
     
+    def displayOptions(self):
+        print("Available Commands:")
+        for command, description in self.commands.items():
+            print(f"- {command}: {description}")
+        print()  # Extra line for readability
+
     def interpret(self, command):
         parts = command.lower().split() #allows users to write in any case and still properly handle commands
 
@@ -199,100 +219,121 @@ class commandInterpreter:
                 hof = input('Enter the Head Of Year ' + str(year) + ': ')
                 self.school.createYearGroup(year, hof)
                 print(self.school.selectYearGroup(year).__repr__() + ' Successfully Created!')
+            elif len(parts) == 3 and parts[1] == 'class':  
+                if self.yearGroup: #checks if we have previously selected a year and is saved in yearGroup
+                    cName = parts[2]
+                    cSubject = input('What Subject will be studied in this class. If a form group, please enter "form": ')
+                    self.yearGroup.createClassroom(cName, cSubject)
+                    if cSubject == 'form':
+                        print(self.yearGroup.selectForm(cName).__repr__() + ' was Succesfully Created')
+                    else:
+                        print(self.yearGroup.selectClass(cName).__repr__() + ' was Succesfully Created')
+                else:
+                    print('No Year Group Selected! ')
+            
             else:
-                print('Invalid Command. Please use the format "add year <yearnumber>"')
+                print('Invalid Command. Please use the format "add year <yearnumber> or "add class <classname>".')
             
         elif action == 'delete':
             if len(parts) == 3 and parts[1] == 'year':
                 year = int(parts[2])
                 self.school.deleteYearGroup(year)
                 print('Year ' + str(year) + ' Succesfully Deleted.')
+            
+            elif len(parts) == 3 and parts[1] == 'class': #can update this to delete classes based on name and subject
+                if self.yearGroup:
+                    delClass = parts[2]
+                    self.yearGroup.deleteClassroom(delClass)
+                else:
+                    print('No Year Group Selected! ')
+
             else: 
-                print('Invalid Command. Please use the format "delete year <yearnumber>"')
+                print('Invalid Command. Please use the format "delete year <yearnumber>" or "delete class <classname>".')
         
         elif action == 'view':
             if len(parts) == 2 and parts[1] == 'years':
                 print('These are all the Year Groups: ')
                 self.school.displayYears()
+            elif len(parts) == 2 and parts[1] == 'classes':
+                if self.yearGroup:
+                    print('These are all the Classes: ')
+                    self.yearGroup.displayClasses()
+                else:
+                    print('No Year Group Selected! ')
+            elif len(parts) == 2 and parts[1] == 'forms':
+                if self.yearGroup:
+                    print('These are all the Forms:')
+                    self.yearGroup.displayForms()
+                else:
+                    print('No Year Group Selected! ')
             else:
-                print('Invalid Command. Please use the format "view years"')
+                print('Invalid Command. Please use the format "view (years/forms/classes".')
         
         elif action == 'select':
             if len(parts) == 3 and parts[1] == 'year':
                 year = int(parts[2])
-                yearGroup = self.school.selectYearGroup(year)
-                if yearGroup:
-                    self.manageYearGroup(yearGroup)
+                self.yearGroup = self.school.selectYearGroup(year)
+                if self.yearGroup:
+                    print('Year ' + str(year) + ' Selected')
+            
+            elif len(parts) == 3 and parts[1] == 'class':
+                if self.yearGroup:
+                    selName = parts[2]
+                    selSubject = input('Please enter the class Subject: ')
+                    if selSubject == 'form':
+                        classroom = self.yearGroup.selectForm(selName)
+                        if classroom:
+                            self.manageClass(classroom)
+                    else:
+                        classroom = self.yearGroup.selectClass(selName)
+                        if classroom:
+                            self.manageClass(classroom)
+                else:
+                    print('No Year Group Selected! ')
             else:
                 print("Invalid 'select' command. Use 'select year <yearnumber>'.")
 
 
-    def manageYearGroup(self, yearGroup):
+    def manageClass(self, classroom):
 
         print('-----------------------------------------')
-        print(yearGroup)
+        print(classroom)
 
-        ygExit = False
-        while ygExit == False:
+        classExit = False
+        while classExit == False:
 
-            print('Year Group Option Menu')
-            print('1) Create Classroom/Form')
-            print('2) Delete Clasroom/Form')
-            print('3) See Forms')
-            print('4) See Classrooms')
-            print('5) Select Classroom/Form')
-            print('6) Exit')
+            print('Class Option Menu: ')
+            print('1) Add a Student')
+            print('2) Remove a Student')
+            print('3) See Class Students')
+            print('4) Select a Student')
+            print('5) Exit')
 
             choice = input('What would you like to do?: ')
             print('-----------------------------------------')
 
             if choice == '1':
-                cName = input('What will be the Classroom/Form name?: ')
-                cSubject = input('What Subject will be studied in this class. If a form group, please enter "form": ')
-                yearGroup.createClassroom(cName, cSubject)
-                if cSubject == 'form':
-                    print(yearGroup.selectForm(cName).__repr__() + ' was Succesfully Created')
-                    print('-----------------------------------------')
-                else:
-                    print(yearGroup.selectClass(cName).__repr__() + ' was Succesfully Created')
-                    print('-----------------------------------------')
-            
-            elif choice == '2': #Can improve this and method to allow for same name but different subjects to delete.
-                delClass = input('Please enter the name of the Classroom/Form you wish to delete: ')
-                yearGroup.deleteClassroom(delClass)
+                newName = input("What is the Student's Name?: ")
+                newSurname = input("What is the Student's Surname?: ")
+                newAge = int(input("What is the Student's Age?: "))
+                classroom.createStudent(newName, newSurname, newAge)
+                print(newName + ' was Succesfully Added!')
                 print('-----------------------------------------')
             
-            elif choice == '3':
-                print('These are all the forms in the Year Group: ')
-                yearGroup.displayForms()
-                print('-----------------------------------------')
-            
-            elif choice == '4':
-                print('These are all the Classrooms in the Year: ')
-                yearGroup.displayClasses()
-                print('-----------------------------------------')
-            
-            elif choice == '5':
-                selName = input('What is the Classroom/Form name?: ')
-                selSubject = input('Please enter the class Subject: ')
-                if selSubject == 'form':
-                    selClass = yearGroup.selectForm(selName)
-                    if selClass:
-                        manageClass(selClass)
-                else:
-                    selClass = yearGroup.selectClass(selName)
-                    if selClass:
-                        manageClass(selClass)
+            elif choice == '2': #need to add remove student method from the 
+                pass
 
+            elif choice == '3':
+                print('Students in Class ' + classroom.name + ': ')
+                classroom.displayClass()
                 print('-----------------------------------------')
             
-            elif choice == '6':
-                print('Exiting Year Group')
-                print('-----------------------------------------')
-                ygExit = True
-            
-            else:
-                print('Enter a valid choice!')
+            elif choice == '4': #need to add student selection
+                pass
+
+            elif choice == '5':
+                print('Exiting Classroom ' + classroom.name)
+                classExit = True
 
 
 #main loop
@@ -327,10 +368,12 @@ def main():
     print(school)
 
     interpreter = commandInterpreter(school)
+    interpreter.displayOptions()
     quitProgram = False
     while quitProgram == False:
         
         command = input("Enter a command (or 'exit' to quit): ").strip()
+        print('-----------------------------------------')
         if command.lower() == 'exit':
             print('Exiting Program')
             quitProgram = True
