@@ -327,46 +327,7 @@ class commandInterpreter:
                 print("Invalid 'select' command. Use 'select year <yearnumber>'.")
 
 
-    def manageClass(self, classroom):
-
-        print('-----------------------------------------')
-        print(classroom)
-
-        classExit = False
-        while classExit == False:
-
-            print('Class Option Menu: ')
-            print('1) Add a Student')
-            print('2) Remove a Student')
-            print('3) See Class Students')
-            print('4) Select a Student')
-            print('5) Exit')
-
-            choice = input('What would you like to do?: ')
-            print('-----------------------------------------')
-
-            if choice == '1':
-                newName = input("What is the Student's Name?: ")
-                newSurname = input("What is the Student's Surname?: ")
-                newAge = int(input("What is the Student's Age?: "))
-                classroom.createStudent(newName, newSurname, newAge)
-                print(newName + ' was Succesfully Added!')
-                print('-----------------------------------------')
-            
-            elif choice == '2': #need to add remove student method from the 
-                pass
-
-            elif choice == '3':
-                print('Students in Class ' + classroom.name + ': ')
-                classroom.displayClass()
-                print('-----------------------------------------')
-            
-            elif choice == '4': #need to add student selection
-                pass
-
-            elif choice == '5':
-                print('Exiting Classroom ' + classroom.name)
-                classExit = True
+    
 
 
 #main loop
@@ -416,114 +377,9 @@ def main():
             print('-----------------------------------------')
 
 
-def manageYG(yearGroup):
+
+
     
-    print('-----------------------------------------')
-    print(yearGroup)
-
-    ygExit = False
-    while ygExit == False:
-
-        print('Year Group Option Menu')
-        print('1) Create Classroom/Form')
-        print('2) Delete Clasroom/Form')
-        print('3) See Forms')
-        print('4) See Classrooms')
-        print('5) Select Classroom/Form')
-        print('6) Exit')
-
-        choice = input('What would you like to do?: ')
-        print('-----------------------------------------')
-
-        if choice == '1':
-            cName = input('What will be the Classroom/Form name?: ')
-            cSubject = input('What Subject will be studied in this class. If a form group, please enter "form": ')
-            yearGroup.createClassroom(cName, cSubject)
-            if cSubject == 'form':
-                print(yearGroup.selectForm(cName).__repr__() + ' was Succesfully Created')
-                print('-----------------------------------------')
-            else:
-                print(yearGroup.selectClass(cName).__repr__() + ' was Succesfully Created')
-                print('-----------------------------------------')
-        
-        elif choice == '2': #Can improve this and method to allow for same name but different subjects to delete.
-            delClass = input('Please enter the name of the Classroom/Form you wish to delete: ')
-            yearGroup.deleteClassroom(delClass)
-            print('-----------------------------------------')
-        
-        elif choice == '3':
-            print('These are all the forms in the Year Group: ')
-            yearGroup.displayForms()
-            print('-----------------------------------------')
-        
-        elif choice == '4':
-            print('These are all the Classrooms in the Year: ')
-            yearGroup.displayClasses()
-            print('-----------------------------------------')
-        
-        elif choice == '5':
-            selName = input('What is the Classroom/Form name?: ')
-            selSubject = input('Please enter the class Subject: ')
-            if selSubject == 'form':
-                selClass = yearGroup.selectForm(selName)
-                if selClass:
-                    manageClass(selClass)
-            else:
-                selClass = yearGroup.selectClass(selName)
-                if selClass:
-                    manageClass(selClass)
-
-            print('-----------------------------------------')
-        
-        elif choice == '6':
-            print('Exiting Year Group')
-            print('-----------------------------------------')
-            ygExit = True
-        
-        else:
-            print('Enter a valid choice!')
-
-
-def manageClass(classroom):
-
-    print('-----------------------------------------')
-    print(classroom)
-
-    classExit = False
-    while classExit == False:
-
-        print('Class Option Menu: ')
-        print('1) Add a Student')
-        print('2) Remove a Student')
-        print('3) See Class Students')
-        print('4) Select a Student')
-        print('5) Exit')
-
-        choice = input('What would you like to do?: ')
-        print('-----------------------------------------')
-
-        if choice == '1':
-            newName = input("What is the Student's Name?: ")
-            newSurname = input("What is the Student's Surname?: ")
-            newAge = int(input("What is the Student's Age?: "))
-            classroom.createStudent(newName, newSurname, newAge)
-            print(newName + ' was Succesfully Added!')
-            print('-----------------------------------------')
-        
-        elif choice == '2': #need to add remove student method from the 
-            pass
-
-        elif choice == '3':
-            print('Students in Class ' + classroom.name + ': ')
-            classroom.displayClass()
-            print('-----------------------------------------')
-        
-        elif choice == '4': #need to add student selection
-            pass
-
-        elif choice == '5':
-            print('Exiting Classroom ' + classroom.name)
-            classExit = True
 
 
 
