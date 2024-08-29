@@ -1,13 +1,11 @@
 class School: #main school class
-    name = None
-    headTeacher = None
-    yearGroup = [] #list to hold the year group classes 
-    numberOfStudents = 0
-    numberOfTeachers = 0
 
     def __init__(self, schoolName, headTeacher):
         self.name = schoolName
         self.headTeacher = headTeacher
+        self.yearGroup = [] #list to hold the year group classes 
+        self.numberOfStudents = 0
+        self.numberOfTeachers = 0
 
     def __repr__(self):
         description = "Welcome to {school}. I am {headTeacher}, the Head Teacher. There are currently {students} student(s) and {teachers} teacher(s) here".format(school = self.name, headTeacher = self.headTeacher, students = self.numberOfStudents, teachers = self.numberOfTeachers)
@@ -48,15 +46,13 @@ class School: #main school class
 
 
 class YearGroup: #class to hold year group information
-    year = None
-    headOfYear = None
-    numberOfStudents = 0
-    forms = []
-    classrooms = []
 
     def __init__(self, year, hof):
         self.year = year
         self.headOfYear = hof
+        self.numberOfStudents = 0
+        self.forms = []
+        self.classrooms = []
     
     def __repr__(self): #This will be the representation of the instance in a list
         return "Year" + str(self.year)
@@ -127,18 +123,16 @@ class YearGroup: #class to hold year group information
         print('Form ' + form + ' was not found.')
 
 class Classroom:
-    name = None
-    teacher = None
-    subject = None
-    studentCount = 0 #can make this so it is pre defined and limits the class to that amount of students
-    students = []
 
     def __init__(self, name, subject):
         self.name = name
         self.subject = subject
+        self.teacher = None
+        self.studentCount = 0 #can make this so it is pre defined and limits the class to that amount of students
+        self.students = []
 
     def __repr__(self):
-        return self.name.upper()
+        return self.name
     
     def __str__(self):
         description = "Welcome to class {name}. This is a {subject} class".format(name=self.name, subject=self.subject)
@@ -155,22 +149,23 @@ class Classroom:
                 return s
 
     def displayClass(self):
+        if len(self.students) == 0:
+            print('No students in the class!')
+            return
+        
         for i in range(len(self.students)):
             print(self.students[i].__repr__())
 
 
 class Student:
-    firstname = None
-    surname = None
-    age = None
-    birthday = None
-    inClass = []
-    inYear = 0
 
     def __init__(self, firstname, surname, age):
         self.firstname = firstname
         self.surname = surname
         self.age = age
+        self.birthday = None
+        self.inClass = []
+        self.inYear = 0
 
     def __repr__(self):
         return self.firstname + ' ' + self.surname       
@@ -198,6 +193,12 @@ class commandInterpreter:
         self.yearGroup = None
         self.classroom = None
     
+    def displaySelections(self): #allow the user to see what is currently selected
+        year = f"Year Group: {self.yearGroup.year}" if self.yearGroup else "Year Group: None"
+        class_form = f"Class/Form: {self.classroom.name}" if self.classroom else "Class/Form: None"
+        print(f"\nCurrent Selection -> {year} | {class_form}")
+
+
     def displayOptions(self):
         print("Available Commands:")
         for command, description in self.commands.items():
@@ -231,6 +232,17 @@ class commandInterpreter:
                 else:
                     print('No Year Group Selected! ')
             
+            elif len(parts) == 2 and parts[1] == 'student':
+                if self.classroom:
+                    newName = input("What is the Student's Name?: ")
+                    newSurname = input("What is the Student's Surname?: ")
+                    newAge = int(input("What is the Student's Age?: "))
+                    self.classroom.createStudent(newName, newSurname, newAge)
+                    print(newName + ' was Succesfully Added!')
+                else:
+                    print('No Classroom/Form selected')
+
+            
             else:
                 print('Invalid Command. Please use the format "add year <yearnumber> or "add class <classname>".')
             
@@ -246,6 +258,13 @@ class commandInterpreter:
                     self.yearGroup.deleteClassroom(delClass)
                 else:
                     print('No Year Group Selected! ')
+            
+            elif len(parts) == 2 and parts[1] == 'student':
+                if self.classroom:
+                    pass #need to add a method to remove student from a class.
+
+                else:
+                    print('No Classroom/Form Selected.')
 
             else: 
                 print('Invalid Command. Please use the format "delete year <yearnumber>" or "delete class <classname>".')
@@ -266,6 +285,14 @@ class commandInterpreter:
                     self.yearGroup.displayForms()
                 else:
                     print('No Year Group Selected! ')
+            
+            elif len(parts) == 2 and parts[1] == 'students':
+                if self.classroom:
+                    print('Students in Class ' + self.classroom.name + ': ')
+                    self.classroom.displayClass()
+                else:
+                    print('No Class/Form Selected')
+
             else:
                 print('Invalid Command. Please use the format "view (years/forms/classes".')
         
@@ -281,15 +308,21 @@ class commandInterpreter:
                     selName = parts[2]
                     selSubject = input('Please enter the class Subject: ')
                     if selSubject == 'form':
-                        classroom = self.yearGroup.selectForm(selName)
-                        if classroom:
-                            self.manageClass(classroom)
+                        self.classroom = self.yearGroup.selectForm(selName)
+                        if self.classroom:
+                            print('Form ' + selName + ' Selected')
                     else:
-                        classroom = self.yearGroup.selectClass(selName)
-                        if classroom:
-                            self.manageClass(classroom)
+                        self.classroom = self.yearGroup.selectClass(selName)
+                        if self.classroom:
+                            print('Classroom ' + selName + ' Selected')
                 else:
                     print('No Year Group Selected! ')
+            
+            elif len(parts) == 2 and parts[1] == 'student':
+                if self.classroom:
+                    pass #need to add student selection
+                else:
+                    print('No Classroom/Form Selected')
             else:
                 print("Invalid 'select' command. Use 'select year <yearnumber>'.")
 
@@ -371,7 +404,8 @@ def main():
     interpreter.displayOptions()
     quitProgram = False
     while quitProgram == False:
-        
+        interpreter.displaySelections()
+        print()
         command = input("Enter a command (or 'exit' to quit): ").strip()
         print('-----------------------------------------')
         if command.lower() == 'exit':
